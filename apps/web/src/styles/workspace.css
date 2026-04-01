@@ -267,6 +267,25 @@
   gap: 0.75rem;
 }
 
+.detail-card {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.95rem 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid var(--line);
+}
+
+.detail-card span {
+  color: var(--muted);
+}
+
+.detail-card strong {
+  display: block;
+  font-size: 1.12rem;
+  line-height: 1.2;
+}
+
 .inspector-section {
   display: grid;
   gap: 0.65rem;
