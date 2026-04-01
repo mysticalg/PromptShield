@@ -14,10 +14,15 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      - name: Validate deployment secrets
+        run: |
+          test -n "${{ secrets.PROD_SSH_HOST }}" || (echo "Missing PROD_SSH_HOST" && exit 1)
+          test -n "${{ secrets.PROD_SSH_USER }}" || (echo "Missing PROD_SSH_USER" && exit 1)
+          test -n "${{ secrets.PROD_SSH_KEY }}" || (echo "Missing PROD_SSH_KEY" && exit 1)
       - name: Archive extension build
         run: |
           cd apps/extension/dist
-          zip -r ../../../../promptshield-extension.zip .
+          zip -r ../../../promptshield-extension.zip .
       - uses: actions/upload-artifact@v4
         with:
           name: promptshield-extension-release
@@ -40,4 +45,3 @@ jobs:
             cd /opt/promptshield
             chmod +x infra/scripts/deploy-ec2.sh
             infra/scripts/deploy-ec2.sh
-
