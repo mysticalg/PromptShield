@@ -6,19 +6,29 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      AWS_REGION: eu-west-2
+      AWS_ACCOUNT_ID: "715113907770"
+      ECR_WEB_REPOSITORY: promptshield-prod-web
+      ECR_API_REPOSITORY: promptshield-prod-api
+      APP_RUNNER_WEB_SERVICE_ARN: arn:aws:apprunner:eu-west-2:715113907770:service/promptshield-prod-web/dfb9f56e8e12470ba01cdb832260a54c
+      APP_RUNNER_API_SERVICE_ARN: arn:aws:apprunner:eu-west-2:715113907770:service/promptshield-prod-api-live/0e0700c27c2e4f71a8b1554362b3545d
+      IMAGE_TAG: sha-${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      - uses: aws-actions/amazon-ecr-login@v2
+        id: login-ecr
       - run: npm ci
       - run: npm run build
-      - name: Validate deployment secrets
-        run: |
-          test -n "${{ secrets.PROD_SSH_HOST }}" || (echo "Missing PROD_SSH_HOST" && exit 1)
-          test -n "${{ secrets.PROD_SSH_USER }}" || (echo "Missing PROD_SSH_USER" && exit 1)
-          test -n "${{ secrets.PROD_SSH_KEY }}" || (echo "Missing PROD_SSH_KEY" && exit 1)
       - name: Archive extension build
         run: |
           cd apps/extension/dist
@@ -27,21 +37,25 @@ jobs:
         with:
           name: promptshield-extension-release
           path: promptshield-extension.zip
-      - name: Sync repo to production host
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.PROD_SSH_HOST }}
-          username: ${{ secrets.PROD_SSH_USER }}
-          key: ${{ secrets.PROD_SSH_KEY }}
-          source: "."
-          target: "/opt/promptshield"
-      - name: Run production deploy
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.PROD_SSH_HOST }}
-          username: ${{ secrets.PROD_SSH_USER }}
-          key: ${{ secrets.PROD_SSH_KEY }}
-          script: |
-            cd /opt/promptshield
-            chmod +x infra/scripts/deploy-ec2.sh
-            infra/scripts/deploy-ec2.sh
+      - name: Build and push API image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker build -f apps/api/Dockerfile -t "$ECR_REGISTRY/$ECR_API_REPOSITORY:$IMAGE_TAG" .
+          docker push "$ECR_REGISTRY/$ECR_API_REPOSITORY:$IMAGE_TAG"
+      - name: Build and push web image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker build -f apps/web/Dockerfile -t "$ECR_REGISTRY/$ECR_WEB_REPOSITORY:$IMAGE_TAG" .
+          docker push "$ECR_REGISTRY/$ECR_WEB_REPOSITORY:$IMAGE_TAG"
+      - name: Update App Runner API service
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: node infra/scripts/update-apprunner-service.mjs "$APP_RUNNER_API_SERVICE_ARN" "$ECR_REGISTRY/$ECR_API_REPOSITORY:$IMAGE_TAG"
+      - name: Update App Runner web service
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: node infra/scripts/update-apprunner-service.mjs "$APP_RUNNER_WEB_SERVICE_ARN" "$ECR_REGISTRY/$ECR_WEB_REPOSITORY:$IMAGE_TAG"
+      - name: Smoke check production
+        run: npm run smoke:deploy -- https://promptshieldapp.co.uk https://api.promptshieldapp.co.uk

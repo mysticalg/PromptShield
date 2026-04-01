@@ -61,7 +61,7 @@ infra/scripts/deploy-ec2.sh
 ## CI/CD
 
 - `.github/workflows/ci.yml` runs typecheck, tests, builds, and archives the extension build.
-- `.github/workflows/deploy-production.yml` packages the extension, syncs the repo to an EC2 host, and runs the production compose deploy script.
+- `.github/workflows/deploy-production.yml` builds the API and web Docker images, pushes them to ECR, updates the live App Runner services, archives the extension build, and runs a production smoke check.
 
 ## Backup and recovery
 

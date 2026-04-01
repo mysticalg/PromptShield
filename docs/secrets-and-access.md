@@ -67,9 +67,8 @@ Optional follow-up:
 
 The production workflow expects:
 
-- `PROD_SSH_HOST`
-- `PROD_SSH_USER`
-- `PROD_SSH_KEY`
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
 
 ## Recommended order
 
