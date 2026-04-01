@@ -20,6 +20,10 @@ PEACH = "#f4e3d5"
 PROMO_BG_TOP = "#3a2016"
 PROMO_BG_BOTTOM = "#b45f33"
 SHADOW = (55, 32, 17, 26)
+FRAME_RADIUS = 8
+INNER_FRAME_RADIUS = 8
+BADGE_RADIUS = 8
+MASK_RADIUS = 8
 
 FONT_REGULAR = ImageFont.truetype(r"C:\Windows\Fonts\segoeui.ttf", 24)
 FONT_BODY = ImageFont.truetype(r"C:\Windows\Fonts\segoeui.ttf", 24)
@@ -27,10 +31,49 @@ FONT_SEMIBOLD = ImageFont.truetype(r"C:\Windows\Fonts\seguisb.ttf", 26)
 FONT_PROMO_BODY = ImageFont.truetype(r"C:\Windows\Fonts\segoeui.ttf", 28)
 
 
+def draw_promptshield_logo(draw: ImageDraw.ImageDraw, xy: tuple[int, int], size: int) -> None:
+    x, y = xy
+    draw.rounded_rectangle((x, y, x + size, y + size), radius=FRAME_RADIUS, fill="#fff5ea", outline="#e2c9af", width=1)
+    shield = [
+        (x + size * 0.5, y + size * 0.16),
+        (x + size * 0.78, y + size * 0.27),
+        (x + size * 0.78, y + size * 0.49),
+        (x + size * 0.73, y + size * 0.63),
+        (x + size * 0.62, y + size * 0.77),
+        (x + size * 0.5, y + size * 0.84),
+        (x + size * 0.38, y + size * 0.77),
+        (x + size * 0.27, y + size * 0.63),
+        (x + size * 0.22, y + size * 0.49),
+        (x + size * 0.22, y + size * 0.27),
+    ]
+    draw.polygon(shield, fill=ACCENT)
+    inner = [
+        (x + size * 0.5, y + size * 0.27),
+        (x + size * 0.66, y + size * 0.33),
+        (x + size * 0.66, y + size * 0.48),
+        (x + size * 0.62, y + size * 0.58),
+        (x + size * 0.5, y + size * 0.68),
+        (x + size * 0.38, y + size * 0.58),
+        (x + size * 0.34, y + size * 0.48),
+        (x + size * 0.34, y + size * 0.33),
+    ]
+    draw.polygon(inner, fill="#fffaf4")
+    bolt = [
+        (x + size * 0.53, y + size * 0.32),
+        (x + size * 0.44, y + size * 0.48),
+        (x + size * 0.52, y + size * 0.48),
+        (x + size * 0.45, y + size * 0.68),
+        (x + size * 0.59, y + size * 0.5),
+        (x + size * 0.51, y + size * 0.5),
+        (x + size * 0.59, y + size * 0.32),
+    ]
+    draw.polygon(bolt, fill=ACCENT)
+
+
 def make_canvas(size: tuple[int, int]) -> Image.Image:
     image = Image.new("RGBA", size, BG)
     draw = ImageDraw.Draw(image)
-    draw.rounded_rectangle((1, 1, size[0] - 2, size[1] - 2), radius=28, outline=LINE, width=2)
+    draw.rounded_rectangle((1, 1, size[0] - 2, size[1] - 2), radius=FRAME_RADIUS, outline=LINE, width=2)
     draw.pieslice((size[0] - 310, -90, size[0] + 80, 230), start=90, end=270, fill="#ecd8c5")
     draw.pieslice((-180, size[1] - 260, 230, size[1] + 120), start=180, end=360, fill="#d9cec0")
     return image
@@ -46,7 +89,7 @@ def make_promo_canvas(size: tuple[int, int]) -> Image.Image:
         draw.line((0, y, size[0], y), fill=top + (255,), width=1)
     image.alpha_composite(overlay)
     draw = ImageDraw.Draw(image)
-    draw.rounded_rectangle((18, 18, size[0] - 18, size[1] - 18), radius=34, outline=(255, 228, 206, 70), width=2)
+    draw.rounded_rectangle((18, 18, size[0] - 18, size[1] - 18), radius=FRAME_RADIUS, outline=(255, 228, 206, 70), width=2)
     draw.pieslice((size[0] - 180, -40, size[0] + 120, 170), start=80, end=280, fill=(255, 227, 200, 48))
     return image
 
@@ -137,13 +180,13 @@ def add_browser_card(
     x0, y0, x1, y1 = box
     width = x1 - x0
     height = y1 - y0
-    radius = 28
+    radius = FRAME_RADIUS
     add_shadow(base, box, radius)
 
     card = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     draw = ImageDraw.Draw(card)
     draw.rounded_rectangle((0, 0, width - 1, height - 1), radius=radius, fill=SURFACE, outline=LINE, width=2)
-    draw.rounded_rectangle((14, 14, width - 14, 48), radius=16, fill="#fffdf8", outline=LINE, width=1)
+    draw.rounded_rectangle((14, 14, width - 14, 48), radius=INNER_FRAME_RADIUS, fill="#fffdf8", outline=LINE, width=1)
     for index, color in enumerate(("#f0c7b1", "#f0d7ab", "#c7ddcb")):
         left = 28 + index * 18
         draw.ellipse((left, 24, left + 10, 34), fill=color)
@@ -156,7 +199,7 @@ def add_browser_card(
         framed = ImageOps.contain(inner, target_size, method=Image.Resampling.LANCZOS)
     px = (width - framed.width) // 2
     py = 62 + max(0, (target_size[1] - framed.height) // 2)
-    card.paste(framed, (px, py), rounded_mask(framed.size, 18))
+    card.paste(framed, (px, py), rounded_mask(framed.size, MASK_RADIUS))
     base.alpha_composite(card, (x0, y0))
 
 
@@ -169,10 +212,11 @@ def add_header(
     body: str,
 ) -> int:
     draw = ImageDraw.Draw(base)
-    draw.text((72, 54), "PromptShield", font=FONT_SEMIBOLD, fill=MUTED)
+    draw_promptshield_logo(draw, (72, 46), 36)
+    draw.text((118, 54), "PromptShield", font=FONT_SEMIBOLD, fill=MUTED)
     badge_width = draw.textbbox((0, 0), badge, font=FONT_SEMIBOLD)[2] + 34
     badge_box = (72, 92, 72 + badge_width, 132)
-    draw.rounded_rectangle(badge_box, radius=20, fill=badge_fill)
+    draw.rounded_rectangle(badge_box, radius=BADGE_RADIUS, fill=badge_fill)
     draw_left_centered_text(draw, badge_box, badge, FONT_SEMIBOLD, badge_text, padding_left=17)
     title_font = fit_title_font(draw, title, 1040, 2, min_size=38, max_size=48)
     next_y = draw_paragraph(draw, title, (72, 160), 1040, title_font, INK, line_gap=6)
@@ -296,7 +340,7 @@ def main() -> None:
         [
             {
                 "source": overview,
-                "crop_box": (1080, 170, 1560, 380),
+                "crop_box": (1020, 250, 1560, 520),
                 "box": (250, 314, 1030, 538),
                 "fit": True,
             },

@@ -19,6 +19,36 @@
   font-size: 2rem;
 }
 
+.brand-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.brand-lockup .eyebrow {
+  margin: 0;
+}
+
+.brand-mark {
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(255, 249, 241, 0.9), rgba(255, 240, 225, 0.88));
+  border: 1px solid rgba(191, 98, 51, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 8px 18px rgba(133, 74, 39, 0.08);
+}
+
+.brand-mark svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  display: block;
+}
+
 .sidebar-copy {
   color: var(--muted);
 }
@@ -48,6 +78,68 @@
   color: var(--ink);
 }
 
+.icon-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.icon-text > span:last-child {
+  min-width: 0;
+}
+
+.button-label {
+  justify-content: center;
+}
+
+.glyph-badge {
+  width: 1.45rem;
+  height: 1.45rem;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border: 1px solid rgba(35, 25, 18, 0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    0 4px 12px rgba(44, 28, 17, 0.05);
+}
+
+.glyph-badge svg {
+  width: 0.84rem;
+  height: 0.84rem;
+  display: block;
+}
+
+.glyph-badge-neutral {
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--muted);
+}
+
+.glyph-badge-accent {
+  background: rgba(191, 98, 51, 0.12);
+  color: var(--accent-dark);
+}
+
+.glyph-badge-mint {
+  background: rgba(220, 236, 227, 0.9);
+  color: var(--redact);
+}
+
+.glyph-badge-peach {
+  background: rgba(244, 227, 213, 0.92);
+  color: var(--accent-dark);
+}
+
+.glyph-badge-ink {
+  background: rgba(255, 255, 255, 0.2);
+  color: currentColor;
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
 .sidebar-bottom {
   display: grid;
   gap: 0.75rem;
@@ -67,6 +159,67 @@
 .overview-summary,
 .incident-copy {
   margin: 0;
+  color: var(--muted);
+}
+
+.destination-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.destination-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  vertical-align: middle;
+}
+
+.destination-label > span:last-child {
+  overflow-wrap: anywhere;
+}
+
+.destination-mark {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border: 1px solid rgba(35, 25, 18, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.66);
+}
+
+.destination-mark svg {
+  width: 0.98rem;
+  height: 0.98rem;
+}
+
+.destination-mark-chatgpt {
+  background: linear-gradient(135deg, #e3f3eb, #d5ebdf);
+  color: #16624b;
+}
+
+.destination-mark-claude {
+  background: linear-gradient(135deg, #f8e5d7, #f0d4c2);
+  color: #a34f22;
+}
+
+.destination-mark-gemini {
+  background: linear-gradient(135deg, #dfe9ff, #f8deef);
+  color: #5367d3;
+}
+
+.destination-mark-copilot {
+  background: linear-gradient(135deg, #dce7ff, #d8f1ea);
+  color: #2d63b4;
+}
+
+.destination-mark-generic {
+  background: rgba(255, 255, 255, 0.7);
   color: var(--muted);
 }
 
@@ -90,6 +243,12 @@
 
 .stat-panel span {
   color: var(--muted);
+}
+
+.stat-panel-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
 }
 
 .stat-panel strong {
@@ -278,6 +437,12 @@
 
 .detail-card span {
   color: var(--muted);
+}
+
+.detail-card-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
 }
 
 .detail-card strong {

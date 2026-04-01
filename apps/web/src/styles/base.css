@@ -70,9 +70,10 @@ button,
   justify-content: center;
   gap: 0.45rem;
   border: 0;
-  border-radius: 999px;
+  border-radius: 8px;
   padding: 0.95rem 1.35rem;
   cursor: pointer;
+  box-shadow: 0 10px 22px rgba(44, 28, 17, 0.08);
   transition:
     transform 180ms ease,
     background-color 180ms ease,
@@ -90,13 +91,16 @@ button:hover,
 .primary-button {
   background: linear-gradient(135deg, var(--accent), var(--accent-dark));
   color: #fff;
-  box-shadow: 0 18px 35px rgba(143, 67, 29, 0.22);
+  box-shadow: 0 16px 32px rgba(143, 67, 29, 0.24);
 }
 
 .secondary-button {
   background: rgba(255, 255, 255, 0.64);
   color: var(--ink);
   border: 1px solid var(--line);
+  box-shadow:
+    0 12px 24px rgba(44, 28, 17, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 .text-link {
@@ -235,6 +239,13 @@ pre {
   border-radius: 999px;
   font-size: 0.82rem;
   font-weight: 600;
+}
+
+.tone-pill svg,
+.meta-pill svg {
+  width: 0.86rem;
+  height: 0.86rem;
+  flex: 0 0 auto;
 }
 
 .meta-pill {
