@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "moduleResolution": "Bundler",
+    "types": ["chrome", "node", "vite/client"]
+  },
+  "include": ["src/**/*.ts", "manifest.config.ts", "vite.config.ts"]
+}

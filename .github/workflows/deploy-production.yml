@@ -1,0 +1,43 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Archive extension build
+        run: |
+          cd apps/extension/dist
+          zip -r ../../../../promptshield-extension.zip .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: promptshield-extension-release
+          path: promptshield-extension.zip
+      - name: Sync repo to production host
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          source: "."
+          target: "/opt/promptshield"
+      - name: Run production deploy
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            cd /opt/promptshield
+            chmod +x infra/scripts/deploy-ec2.sh
+            infra/scripts/deploy-ec2.sh
+

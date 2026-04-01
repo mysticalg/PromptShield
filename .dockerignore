@@ -1,0 +1,14 @@
+.git
+.github
+.playwright-cli
+node_modules
+coverage
+reports
+playwright-report
+test-results
+tmp
+tmp_spec.txt
+apps/api/.data
+apps/extension/dist
+infra/aws/.env.prod
+*.log

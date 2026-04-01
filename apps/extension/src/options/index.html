@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PromptShield Options</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4ede2;
+        --surface: rgba(255, 250, 244, 0.92);
+        --line: rgba(36, 26, 18, 0.12);
+        --ink: #241a12;
+        --muted: #695749;
+        --accent: #bd5f30;
+        --accent-dark: #8f421d;
+        --shadow: 0 18px 45px rgba(44, 30, 20, 0.14);
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 2rem;
+        background:
+          radial-gradient(circle at top right, rgba(189, 95, 48, 0.18), transparent 26%),
+          linear-gradient(180deg, #efe4d4 0%, var(--bg) 55%, #f8f2e8 100%);
+        color: var(--ink);
+      }
+
+      main {
+        max-width: 760px;
+        margin: 0 auto;
+        display: grid;
+        gap: 1rem;
+      }
+
+      section {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 1.3rem;
+        padding: 1.2rem;
+        box-shadow: var(--shadow);
+      }
+
+      h1,
+      h2,
+      p {
+        margin: 0;
+      }
+
+      .eyebrow {
+        color: var(--muted);
+        font-size: 0.74rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+      }
+
+      .meta-grid,
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .meta-pill {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 0.5rem 0.8rem;
+        background: rgba(255, 255, 255, 0.62);
+        border: 1px solid var(--line);
+        font-size: 0.84rem;
+        color: var(--muted);
+      }
+
+      label {
+        display: grid;
+        gap: 0.45rem;
+        margin-top: 0.95rem;
+        color: var(--muted);
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 0.85rem 0.95rem;
+        border-radius: 0.9rem;
+        border: 1px solid rgba(36, 26, 18, 0.18);
+        background: rgba(255, 255, 255, 0.7);
+        color: var(--ink);
+      }
+
+      input[type="checkbox"] {
+        margin-right: 0.55rem;
+      }
+
+      .check-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      button {
+        border: 0;
+        border-radius: 999px;
+        padding: 0.86rem 1.05rem;
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        color: white;
+        cursor: pointer;
+      }
+
+      .secondary {
+        background: rgba(255, 255, 255, 0.62);
+        color: var(--ink);
+        border: 1px solid var(--line);
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      #save-status {
+        min-height: 1.2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section>
+        <p class="eyebrow">PromptShield</p>
+        <h1>Extension options</h1>
+        <p class="muted" style="margin-top: 0.65rem">
+          Production installs should point at the live PromptShield API by default. Use this page only when you need a
+          different environment or support posture.
+        </p>
+        <div class="meta-grid" style="margin-top: 0.95rem">
+          <div class="meta-pill">Production default: https://api.promptshieldapp.co.uk</div>
+          <div class="meta-pill">Popup and background stay in sync with these values</div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Environment</h2>
+        <label>
+          API base URL
+          <input id="api-base-url" type="text" />
+        </label>
+
+        <label class="check-row">
+          <input id="support-mode" type="checkbox" />
+          Enable support mode with explicit user consent
+        </label>
+        <label class="check-row">
+          <input id="reduce-motion" type="checkbox" />
+          Reduce motion in inline warning UI
+        </label>
+        <label class="check-row">
+          <input id="auto-sync" type="checkbox" />
+          Keep background policy sync enabled
+        </label>
+
+        <div class="actions" style="margin-top: 1rem">
+          <button id="save-button">Save settings</button>
+          <button id="reset-button" class="secondary">Use production defaults</button>
+        </div>
+
+        <p id="save-status" class="muted" style="margin-top: 0.85rem"></p>
+      </section>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

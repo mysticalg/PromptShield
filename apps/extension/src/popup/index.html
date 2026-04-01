@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PromptShield</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4ede2;
+        --surface: rgba(255, 249, 241, 0.92);
+        --line: rgba(36, 26, 18, 0.12);
+        --ink: #241a12;
+        --muted: #695749;
+        --accent: #bd5f30;
+        --accent-dark: #8f421d;
+        --block: #7b3320;
+        --block-soft: rgba(123, 51, 32, 0.14);
+        --safe: #40694d;
+        --safe-soft: rgba(64, 105, 77, 0.14);
+        --warn: #9c6a17;
+        --warn-soft: rgba(156, 106, 23, 0.14);
+        --shadow: 0 18px 45px rgba(44, 30, 20, 0.14);
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-width: 380px;
+        background:
+          radial-gradient(circle at top right, rgba(189, 95, 48, 0.18), transparent 26%),
+          linear-gradient(180deg, #efe4d4 0%, var(--bg) 55%, #f8f2e8 100%);
+        color: var(--ink);
+      }
+
+      main {
+        padding: 1rem;
+        display: grid;
+        gap: 0.85rem;
+      }
+
+      section {
+        border: 1px solid var(--line);
+        border-radius: 1.2rem;
+        padding: 1rem;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      h1,
+      h2,
+      p {
+        margin: 0;
+      }
+
+      .hero {
+        display: grid;
+        gap: 0.85rem;
+      }
+
+      .hero-top,
+      .hero-footer,
+      .actions,
+      .status-row,
+      .detail-grid,
+      .meta-grid {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+
+      .hero-top {
+        align-items: start;
+      }
+
+      .brand-copy {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .eyebrow {
+        color: var(--muted);
+        font-size: 0.74rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+      }
+
+      .status-chip,
+      .meta-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .status-chip {
+        background: var(--warn-soft);
+        color: var(--warn);
+      }
+
+      .status-chip.protected {
+        background: var(--block-soft);
+        color: var(--block);
+      }
+
+      .status-chip.unprotected {
+        background: var(--safe-soft);
+        color: var(--safe);
+      }
+
+      .meta-grid {
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        justify-content: start;
+      }
+
+      .meta-pill {
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.7rem;
+      }
+
+      .detail-card {
+        padding: 0.85rem;
+        border-radius: 1rem;
+        background: rgba(255, 255, 255, 0.58);
+        border: 1px solid var(--line);
+      }
+
+      .detail-card span,
+      .label {
+        display: block;
+        margin-bottom: 0.35rem;
+        color: var(--muted);
+        font-size: 0.76rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+
+      .detail-card strong {
+        display: block;
+        font-size: 1.05rem;
+      }
+
+      label {
+        display: grid;
+        gap: 0.45rem;
+        color: var(--muted);
+      }
+
+      input {
+        width: 100%;
+        padding: 0.85rem 0.95rem;
+        border-radius: 0.9rem;
+        border: 1px solid rgba(36, 26, 18, 0.16);
+        background: rgba(255, 255, 255, 0.7);
+        color: var(--ink);
+      }
+
+      button,
+      .button-link {
+        border: 0;
+        border-radius: 999px;
+        padding: 0.82rem 1rem;
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        color: white;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .secondary,
+      .button-link.secondary {
+        background: rgba(255, 255, 255, 0.62);
+        color: var(--ink);
+        border: 1px solid var(--line);
+      }
+
+      .actions {
+        flex-wrap: wrap;
+        justify-content: start;
+      }
+
+      .muted {
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .status-row {
+        align-items: start;
+      }
+
+      .status-copy {
+        display: grid;
+        gap: 0.4rem;
+      }
+
+      .small {
+        font-size: 0.85rem;
+      }
+
+      code {
+        display: block;
+        padding: 0.8rem 0.9rem;
+        border-radius: 0.9rem;
+        background: rgba(255, 255, 255, 0.58);
+        border: 1px solid var(--line);
+        font-family: Consolas, monospace;
+        font-size: 0.82rem;
+        word-break: break-all;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <div class="hero-top">
+          <div class="brand-copy">
+            <p class="eyebrow">PromptShield</p>
+            <h1 id="org-name">Not connected</h1>
+            <p id="status-line" class="muted">Load this extension on a protected domain to enforce policies.</p>
+          </div>
+          <div id="site-chip" class="status-chip">Idle</div>
+        </div>
+
+        <div class="meta-grid">
+          <div id="plan-pill" class="meta-pill">No plan</div>
+          <div id="entitlement-pill" class="meta-pill">Not signed in</div>
+          <div id="host-pill" class="meta-pill">No active tab</div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-card">
+            <span>Policy</span>
+            <strong id="policy-value">v n/a</strong>
+          </div>
+          <div class="detail-card">
+            <span>Queued events</span>
+            <strong id="queue-value">0</strong>
+          </div>
+          <div class="detail-card">
+            <span>Last sync</span>
+            <strong id="sync-value">Never</strong>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="status-row">
+          <div class="status-copy">
+            <h2>Activation</h2>
+            <p class="muted">Generate a short-lived code in the admin console and enter it here.</p>
+          </div>
+          <div id="motion-pill" class="meta-pill">Motion on</div>
+        </div>
+
+        <label>
+          Device code
+          <input id="activation-code" placeholder="Enter device code" />
+        </label>
+
+        <div class="actions" style="margin-top: 0.85rem">
+          <button id="activate-button">Connect</button>
+          <a
+            id="console-link"
+            class="button-link secondary"
+            href="https://promptshieldapp.co.uk/login"
+            target="_blank"
+            rel="noreferrer"
+            >Open console</a
+          >
+          <button id="sync-button" class="secondary">Sync now</button>
+          <button id="options-button" class="secondary">Options</button>
+          <button id="signout-button" class="secondary">Sign out</button>
+        </div>
+      </section>
+
+      <section>
+        <p class="label">Device</p>
+        <code id="detail-line">Policy: n/a</code>
+        <p id="support-line" class="muted small" style="margin-top: 0.75rem">
+          Support mode is off. Diagnostics require explicit operator intent.
+        </p>
+      </section>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,34 @@
+{
+  "name": "promptshield",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PromptShield monorepo: extension, API, admin web, and production deployment assets.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run build -w @promptshield/core && concurrently -n api,web -c cyan,green \"npm run dev -w @promptshield/api\" \"npm run dev -w @promptshield/web\"",
+    "build": "npm run build -w @promptshield/core && npm run build -w @promptshield/api && npm run build -w @promptshield/web && npm run build -w @promptshield/extension",
+    "lint": "npm run lint -w @promptshield/core && npm run lint -w @promptshield/api && npm run lint -w @promptshield/web && npm run lint -w @promptshield/extension",
+    "typecheck": "npm run typecheck -w @promptshield/core && npm run typecheck -w @promptshield/api && npm run typecheck -w @promptshield/web && npm run typecheck -w @promptshield/extension",
+    "test": "npm run test -w @promptshield/core && npm run test -w @promptshield/api",
+    "format": "prettier --write .",
+    "verify": "npm run lint && npm run typecheck && npm run test && npm run build",
+    "validate:prod-env": "node infra/scripts/validate-prod-env.mjs",
+    "smoke:deploy": "node infra/scripts/smoke-check.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^24.6.1",
+    "@typescript-eslint/eslint-plugin": "^8.44.0",
+    "@typescript-eslint/parser": "^8.44.0",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.36.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.6.2",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}

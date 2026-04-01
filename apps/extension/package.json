@@ -1,0 +1,21 @@
+{
+  "name": "@promptshield/extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm run build -w @promptshield/core && vite build --watch",
+    "build": "npm run build -w @promptshield/core && vite build",
+    "package:release": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$version=(Get-Content package.json | ConvertFrom-Json).version; $outDir='releases'; New-Item -ItemType Directory -Force -Path $outDir | Out-Null; $zip=Join-Path $outDir ('promptshield-extension-' + $version + '.zip'); if (Test-Path $zip) { Remove-Item $zip -Force }; Compress-Archive -Path 'dist\\*' -DestinationPath $zip; Write-Output $zip\"",
+    "lint": "eslint src manifest.config.ts vite.config.ts --ext .ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@crxjs/vite-plugin": "^2.2.0",
+    "@promptshield/core": "file:../../packages/core",
+    "vite": "^7.1.7"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.1.38"
+  }
+}
