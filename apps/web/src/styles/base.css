@@ -105,6 +105,8 @@ button:hover,
 
 .text-link {
   color: var(--muted);
+  display: inline-flex;
+  align-items: center;
   transition: color 180ms ease;
 }
 
@@ -154,6 +156,8 @@ button:hover,
 
 .preview-link {
   font-weight: 600;
+  display: inline-flex;
+  align-items: center;
 }
 
 .section-heading h3,
@@ -252,6 +256,34 @@ pre {
   background: rgba(255, 255, 255, 0.65);
   border: 1px solid var(--line);
   color: var(--ink);
+}
+
+@media (max-width: 640px) {
+  button,
+  .primary-button,
+  .secondary-button {
+    padding: 0.82rem 1.05rem;
+  }
+
+  .panel,
+  .auth-card,
+  .demo-workbench,
+  .pricing-tier,
+  .trust-compare-panel,
+  .timeline-step,
+  .narrative-block {
+    border-radius: 1.3rem;
+  }
+
+  .panel {
+    padding: 1.1rem;
+  }
+
+  input,
+  textarea,
+  select {
+    padding: 0.82rem 0.9rem;
+  }
 }
 
 .tone-pill.tone-block {

@@ -29,45 +29,46 @@ FONT_REGULAR = ImageFont.truetype(r"C:\Windows\Fonts\segoeui.ttf", 24)
 FONT_BODY = ImageFont.truetype(r"C:\Windows\Fonts\segoeui.ttf", 24)
 FONT_SEMIBOLD = ImageFont.truetype(r"C:\Windows\Fonts\seguisb.ttf", 26)
 FONT_PROMO_BODY = ImageFont.truetype(r"C:\Windows\Fonts\segoeui.ttf", 28)
+LOGO_MARK = Image.open(ROOT / "apps" / "web" / "public" / "promptshield-logo-mark.png").convert("RGBA")
+LOGO_LOCKUP = Image.open(ROOT / "apps" / "web" / "public" / "promptshield-logo-lockup.png").convert("RGBA")
 
 
-def draw_promptshield_logo(draw: ImageDraw.ImageDraw, xy: tuple[int, int], size: int) -> None:
+def paste_promptshield_logo(base: Image.Image, xy: tuple[int, int], size: int) -> None:
     x, y = xy
-    draw.rounded_rectangle((x, y, x + size, y + size), radius=FRAME_RADIUS, fill="#fff5ea", outline="#e2c9af", width=1)
-    shield = [
-        (x + size * 0.5, y + size * 0.16),
-        (x + size * 0.78, y + size * 0.27),
-        (x + size * 0.78, y + size * 0.49),
-        (x + size * 0.73, y + size * 0.63),
-        (x + size * 0.62, y + size * 0.77),
-        (x + size * 0.5, y + size * 0.84),
-        (x + size * 0.38, y + size * 0.77),
-        (x + size * 0.27, y + size * 0.63),
-        (x + size * 0.22, y + size * 0.49),
-        (x + size * 0.22, y + size * 0.27),
-    ]
-    draw.polygon(shield, fill=ACCENT)
-    inner = [
-        (x + size * 0.5, y + size * 0.27),
-        (x + size * 0.66, y + size * 0.33),
-        (x + size * 0.66, y + size * 0.48),
-        (x + size * 0.62, y + size * 0.58),
-        (x + size * 0.5, y + size * 0.68),
-        (x + size * 0.38, y + size * 0.58),
-        (x + size * 0.34, y + size * 0.48),
-        (x + size * 0.34, y + size * 0.33),
-    ]
-    draw.polygon(inner, fill="#fffaf4")
-    bolt = [
-        (x + size * 0.53, y + size * 0.32),
-        (x + size * 0.44, y + size * 0.48),
-        (x + size * 0.52, y + size * 0.48),
-        (x + size * 0.45, y + size * 0.68),
-        (x + size * 0.59, y + size * 0.5),
-        (x + size * 0.51, y + size * 0.5),
-        (x + size * 0.59, y + size * 0.32),
-    ]
-    draw.polygon(bolt, fill=ACCENT)
+    tile = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(tile)
+    draw.rounded_rectangle((0, 0, size - 1, size - 1), radius=FRAME_RADIUS, fill="#fff5ea", outline="#e2c9af", width=1)
+    logo = ImageOps.contain(LOGO_MARK, (int(size * 0.78), int(size * 0.78)), method=Image.Resampling.LANCZOS)
+    logo_x = (size - logo.width) // 2
+    logo_y = (size - logo.height) // 2 + 1
+    tile.alpha_composite(logo, (logo_x, logo_y))
+    base.alpha_composite(tile, (x, y))
+
+
+def draw_brand_wordmark(
+    base: Image.Image,
+    draw: ImageDraw.ImageDraw,
+    xy: tuple[int, int],
+    logo_size: int,
+    font: ImageFont.FreeTypeFont,
+    fill: str,
+) -> tuple[int, int]:
+    x, y = xy
+    paste_promptshield_logo(base, (x, y), logo_size)
+    text = "PromptShield"
+    text_box = draw.textbbox((0, 0), text, font=font)
+    text_height = text_box[3] - text_box[1]
+    text_x = x + logo_size + 10
+    text_y = y + ((logo_size - text_height) // 2) - text_box[1] + 1
+    draw.text((text_x, text_y), text, font=font, fill=fill)
+    return text_x, text_y
+
+
+def paste_brand_lockup(base: Image.Image, xy: tuple[int, int], width: int) -> tuple[int, int]:
+    x, y = xy
+    lockup = ImageOps.contain(LOGO_LOCKUP, (width, int(width * 0.68)), method=Image.Resampling.LANCZOS)
+    base.alpha_composite(lockup, (x, y))
+    return lockup.size
 
 
 def make_canvas(size: tuple[int, int]) -> Image.Image:
@@ -212,14 +213,17 @@ def add_header(
     body: str,
 ) -> int:
     draw = ImageDraw.Draw(base)
-    draw_promptshield_logo(draw, (72, 46), 36)
-    draw.text((118, 54), "PromptShield", font=FONT_SEMIBOLD, fill=MUTED)
+    logo_x = 66
+    logo_y = 34
+    _, logo_height = paste_brand_lockup(base, (logo_x, logo_y), 130)
     badge_width = draw.textbbox((0, 0), badge, font=FONT_SEMIBOLD)[2] + 34
-    badge_box = (72, 92, 72 + badge_width, 132)
+    badge_top = logo_y + logo_height + 14
+    badge_box = (72, badge_top, 72 + badge_width, badge_top + 40)
     draw.rounded_rectangle(badge_box, radius=BADGE_RADIUS, fill=badge_fill)
     draw_left_centered_text(draw, badge_box, badge, FONT_SEMIBOLD, badge_text, padding_left=17)
     title_font = fit_title_font(draw, title, 1040, 2, min_size=38, max_size=48)
-    next_y = draw_paragraph(draw, title, (72, 160), 1040, title_font, INK, line_gap=6)
+    title_top = badge_box[3] + 28
+    next_y = draw_paragraph(draw, title, (72, title_top), 1040, title_font, INK, line_gap=6)
     if body:
         next_y = draw_paragraph(draw, body, (72, next_y + 10), 1060, FONT_BODY, MUTED, line_gap=6)
     return next_y + 14
@@ -252,7 +256,7 @@ def render_screenshot(
 def render_promo_tiles(overview: Image.Image, events: Image.Image) -> None:
     small = make_promo_canvas((440, 280))
     draw = ImageDraw.Draw(small)
-    draw.text((34, 34), "PromptShield", font=ImageFont.truetype(r"C:\Windows\Fonts\seguisb.ttf", 28), fill="#fff3e8")
+    draw_brand_wordmark(small, draw, (34, 26), 30, ImageFont.truetype(r"C:\Windows\Fonts\seguisb.ttf", 28), "#fff3e8")
     promo_small_title = fit_title_font(draw, "Protect prompts in-browser.", 180, 3, min_size=22, max_size=32)
     draw_paragraph(
         draw,
@@ -268,7 +272,7 @@ def render_promo_tiles(overview: Image.Image, events: Image.Image) -> None:
 
     large = make_promo_canvas((920, 680))
     draw = ImageDraw.Draw(large)
-    draw.text((36, 38), "PromptShield", font=ImageFont.truetype(r"C:\Windows\Fonts\seguisb.ttf", 32), fill="#fff3e8")
+    draw_brand_wordmark(large, draw, (36, 28), 34, ImageFont.truetype(r"C:\Windows\Fonts\seguisb.ttf", 32), "#fff3e8")
     promo_large_title = fit_title_font(draw, "Protect prompts before they leave the browser.", 380, 3, min_size=38, max_size=58)
     next_y = draw_paragraph(
         draw,

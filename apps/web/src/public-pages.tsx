@@ -19,6 +19,15 @@ import {
   trustFlow,
   trustPillars
 } from "./app-data";
+import {
+  BrandLockup,
+  BrandGraphic,
+  IconBadge,
+  IconText,
+  ProviderPill,
+  TonePill,
+  type UiGlyphName
+} from "./brand-system";
 import { apiRequest, API_BASE_URL } from "./lib/api";
 import { storeSession } from "./lib/session";
 import { useSessionContext } from "./session-context";
@@ -29,12 +38,79 @@ type RevealSectionProps = {
   children: ReactNode;
 };
 
-function TonePill({ label, tone }: { label: string; tone: string }) {
-  return <span className={`tone-pill tone-${tone}`}>{label}</span>;
-}
-
 const pendingMagicTokens = new Set<string>();
 const completedMagicTokens = new Set<string>();
+
+function marketingIconForPillar(title: string): UiGlyphName {
+  switch (title) {
+    case "Local first enforcement":
+      return "browser";
+    case "Metadata-only telemetry":
+      return "privacy";
+    default:
+      return "settings";
+  }
+}
+
+function marketingIconForTemplate(name: string): UiGlyphName {
+  switch (name) {
+    case "PII Guard":
+      return "privacy";
+    case "Source Code and Secret Guard":
+      return "shield";
+    default:
+      return "incident";
+  }
+}
+
+function marketingIconForTier(name: string): UiGlyphName {
+  switch (name) {
+    case "Pro":
+      return "spark";
+    case "Team":
+      return "users";
+    default:
+      return "shield";
+  }
+}
+
+function trustFlowIcon(step: string): UiGlyphName {
+  switch (step) {
+    case "01":
+      return "policies";
+    case "02":
+      return "device-code";
+    case "03":
+      return "shield";
+    default:
+      return "events";
+  }
+}
+
+function privacyCardIcon(title: string): UiGlyphName {
+  switch (title) {
+    case "Browser-side review":
+      return "browser";
+    case "Policy-driven intervention":
+      return "rules";
+    case "Admin review":
+      return "events";
+    case "Deployment model":
+      return "destination";
+    case "`storage`":
+      return "settings";
+    case "`alarms`":
+      return "clock";
+    case "`activeTab`":
+      return "browser";
+    case "Host permissions":
+      return "shield";
+    case "Website":
+      return "launch";
+    default:
+      return "mail";
+  }
+}
 
 function RevealSection({ id, className, children }: RevealSectionProps) {
   const ref = useRef<HTMLElement | null>(null);
@@ -73,22 +149,28 @@ function RevealSection({ id, className, children }: RevealSectionProps) {
 function MarketingHeader() {
   return (
     <header className="marketing-topbar">
-      <Link className="brand-mark" to="/">
-        PromptShield
+      <Link className="marketing-brand-link" to="/">
+        <BrandLockup caption="Browser-first GenAI control plane" compact />
       </Link>
 
       <nav className="marketing-nav">
-        <NavLink to="/">Platform</NavLink>
-        <NavLink to="/pricing">Pricing</NavLink>
-        <NavLink to="/trust">Trust Center</NavLink>
+        <NavLink to="/">
+          <IconText icon="overview" tone="accent">Platform</IconText>
+        </NavLink>
+        <NavLink to="/pricing">
+          <IconText icon="billing" tone="accent">Pricing</IconText>
+        </NavLink>
+        <NavLink to="/trust">
+          <IconText icon="shield" tone="accent">Trust Center</IconText>
+        </NavLink>
       </nav>
 
       <div className="marketing-topbar-actions">
         <a className="text-link" href={`${API_BASE_URL}/openapi.json`} target="_blank" rel="noreferrer">
-          API
+          <IconText icon="launch" tone="neutral">API</IconText>
         </a>
         <NavLink className="primary-button" to="/login">
-          Start Pilot
+          <IconText icon="device-code" tone="ink" className="button-label">Start Pilot</IconText>
         </NavLink>
       </div>
     </header>
@@ -98,15 +180,20 @@ function MarketingHeader() {
 function MarketingFooter() {
   return (
     <footer className="marketing-footer">
-      <div>
-        <p className="eyebrow">PromptShield</p>
-        <strong>Browser-first controls for GenAI data handling.</strong>
-      </div>
+      <BrandLockup caption="Browser-first controls for GenAI data handling." />
       <div className="marketing-footer-links">
-        <NavLink to="/trust">Trust Center</NavLink>
-        <NavLink to="/privacy">Privacy</NavLink>
-        <NavLink to="/pricing">Pricing</NavLink>
-        <NavLink to="/login">Admin sign-in</NavLink>
+        <NavLink to="/trust">
+          <IconText icon="shield" tone="neutral">Trust Center</IconText>
+        </NavLink>
+        <NavLink to="/privacy">
+          <IconText icon="privacy" tone="neutral">Privacy</IconText>
+        </NavLink>
+        <NavLink to="/pricing">
+          <IconText icon="billing" tone="neutral">Pricing</IconText>
+        </NavLink>
+        <NavLink to="/login">
+          <IconText icon="mail" tone="neutral">Admin sign-in</IconText>
+        </NavLink>
       </div>
     </footer>
   );
@@ -129,7 +216,9 @@ function DemoWorkbench() {
     <div className="demo-workbench">
       <div className="demo-controls">
         <div className="section-heading">
-          <p className="eyebrow">Interactive demo</p>
+          <p className="eyebrow">
+            <IconText icon="spark" tone="accent">Interactive demo</IconText>
+          </p>
           <h3>Swap the scenario and watch the live intervention change.</h3>
         </div>
 
@@ -141,7 +230,22 @@ function DemoWorkbench() {
               onClick={() => setScenarioId(candidate.id)}
               type="button"
             >
-              <span>{candidate.label}</span>
+              <span className="demo-scenario-meta">
+                <IconText
+                  icon={
+                    candidate.id === "block"
+                      ? "shield"
+                      : candidate.id === "redact"
+                        ? "privacy"
+                        : candidate.id === "justify"
+                          ? "rule"
+                          : "incident"
+                  }
+                  tone="accent"
+                >
+                  {candidate.label}
+                </IconText>
+              </span>
               <strong>{candidate.title}</strong>
             </button>
           ))}
@@ -176,7 +280,9 @@ function DemoWorkbench() {
         </div>
 
         <div className="section-heading">
-          <p className="eyebrow">Result</p>
+          <p className="eyebrow">
+            <IconText icon="signals" tone="accent">Result</IconText>
+          </p>
           <h3>{outcomeHeadline(outcome)}</h3>
           <p>{scenario.detail}</p>
         </div>
@@ -249,33 +355,44 @@ export function MarketingPage({ initialSectionId }: { initialSectionId?: string 
       <main className="marketing-main">
         <section className="hero-stage">
           <div className="hero-copy">
-            <p className="eyebrow">GenAI Data Leak Guard</p>
-            <span className="hero-brand">PromptShield</span>
+            <div className="hero-brand-lockup">
+              <BrandGraphic className="hero-brand-graphic" />
+            </div>
             <h1>Keep sensitive prompts inside the browser.</h1>
             <p className="hero-summary">
               PromptShield intervenes before secrets, customer data, or internal project language can leave a protected
               browser session for ChatGPT, Claude, Gemini, Copilot, and other AI surfaces.
             </p>
 
+            <div className="hero-provider-strip">
+              <ProviderPill provider="chatgpt" label="ChatGPT" />
+              <ProviderPill provider="claude" label="Claude" />
+              <ProviderPill provider="gemini" label="Gemini" />
+              <ProviderPill provider="copilot" label="Copilot" />
+            </div>
+
             <div className="hero-actions">
               <NavLink className="primary-button" to="/login">
-                Start Free Trial
+                <IconText icon="spark" tone="ink" className="button-label">Start Free Trial</IconText>
               </NavLink>
               <NavLink className="secondary-button" to="/trust">
-                Visit Trust Center
+                <IconText icon="shield" tone="neutral" className="button-label">Visit Trust Center</IconText>
               </NavLink>
             </div>
 
             <div className="hero-proofline">
               <div>
+                <IconText icon="response" tone="peach">4 intervention modes</IconText>
                 <strong>4</strong>
-                <span>intervention modes</span>
+                <span>block, redact, justify, and warn</span>
               </div>
               <div>
+                <IconText icon="browser" tone="mint">Local enforcement</IconText>
                 <strong>Local</strong>
                 <span>browser-side enforcement</span>
               </div>
               <div>
+                <IconText icon="privacy" tone="accent">Metadata-first signal</IconText>
                 <strong>Metadata-only</strong>
                 <span>telemetry by default</span>
               </div>
@@ -309,7 +426,9 @@ export function MarketingPage({ initialSectionId }: { initialSectionId?: string 
 
         <RevealSection id="proof" className="content-stage">
           <div className="section-intro">
-            <p className="eyebrow">Live proof</p>
+            <p className="eyebrow">
+              <IconText icon="trend" tone="accent">Live proof</IconText>
+            </p>
             <h2>Show the intervention your client will actually experience.</h2>
             <p>
               Change the prompt, switch the destination, and the shared PromptShield engine recalculates the response in
@@ -321,7 +440,9 @@ export function MarketingPage({ initialSectionId }: { initialSectionId?: string 
 
         <RevealSection className="content-stage">
           <div className="section-intro">
-            <p className="eyebrow">Operating model</p>
+            <p className="eyebrow">
+              <IconText icon="settings" tone="accent">Operating model</IconText>
+            </p>
             <h2>A security control that feels deployable, not theoretical.</h2>
             <p>
               The control plane stays light, the extension stays fast, and operators get enough evidence to manage rollout
@@ -331,20 +452,28 @@ export function MarketingPage({ initialSectionId }: { initialSectionId?: string 
 
           <div className="split-stage">
             <div className="split-column">
-              <p className="eyebrow">Why buyers trust it</p>
+              <p className="eyebrow">
+                <IconText icon="shield" tone="accent">Why buyers trust it</IconText>
+              </p>
               {trustPillars.map((pillar) => (
                 <article key={pillar.title} className="narrative-block">
-                  <h3>{pillar.title}</h3>
+                  <h3 className="card-title">
+                    <IconText icon={marketingIconForPillar(pillar.title)} tone="accent">{pillar.title}</IconText>
+                  </h3>
                   <p>{pillar.body}</p>
                 </article>
               ))}
             </div>
 
             <div className="split-column">
-              <p className="eyebrow">Policy templates</p>
+              <p className="eyebrow">
+                <IconText icon="policies" tone="accent">Policy templates</IconText>
+              </p>
               {templateLibrary.map((template) => (
                 <article key={template.name} className="narrative-block">
-                  <h3>{template.name}</h3>
+                  <h3 className="card-title">
+                    <IconText icon={marketingIconForTemplate(template.name)} tone="peach">{template.name}</IconText>
+                  </h3>
                   <p>{template.body}</p>
                 </article>
               ))}
@@ -354,7 +483,9 @@ export function MarketingPage({ initialSectionId }: { initialSectionId?: string 
 
         <RevealSection id="pricing" className="content-stage">
           <div className="section-intro">
-            <p className="eyebrow">Pricing</p>
+            <p className="eyebrow">
+              <IconText icon="billing" tone="accent">Pricing</IconText>
+            </p>
             <h2>Start self-serve, then graduate into managed rollout.</h2>
             <p>Keep the entry point simple without giving up the governance story buyers expect later.</p>
           </div>
@@ -362,7 +493,9 @@ export function MarketingPage({ initialSectionId }: { initialSectionId?: string 
           <div className="pricing-stage">
             {pricingTiers.map((tier) => (
               <article key={tier.name} className="pricing-tier">
-                <p className="eyebrow">{tier.name}</p>
+                <p className="eyebrow">
+                  <IconText icon={marketingIconForTier(tier.name)} tone="accent">{tier.name}</IconText>
+                </p>
                 <strong>{tier.price}</strong>
                 <p>{tier.detail}</p>
                 <span>{tier.inclusions}</span>
@@ -373,15 +506,17 @@ export function MarketingPage({ initialSectionId }: { initialSectionId?: string 
 
         <RevealSection className="closing-stage">
           <div>
-            <p className="eyebrow">Ready for pilot</p>
+            <p className="eyebrow">
+              <IconText icon="spark" tone="accent">Ready for pilot</IconText>
+            </p>
             <h2>Give clients a control they can understand in one meeting.</h2>
           </div>
           <div className="closing-actions">
             <NavLink className="primary-button" to="/login">
-              Enter the control plane
+              <IconText icon="launch" tone="ink" className="button-label">Enter the control plane</IconText>
             </NavLink>
             <NavLink className="secondary-button" to="/trust">
-              Review trust details
+              <IconText icon="shield" tone="neutral" className="button-label">Review trust details</IconText>
             </NavLink>
           </div>
         </RevealSection>
@@ -400,7 +535,9 @@ export function TrustCenterPage() {
       <main className="marketing-main">
         <section className="trust-hero">
           <div>
-            <p className="eyebrow">Trust Center</p>
+            <p className="eyebrow">
+              <IconText icon="shield" tone="accent">Trust Center</IconText>
+            </p>
             <h1>Designed to minimize data exposure while still producing usable security signal.</h1>
           </div>
           <p>
@@ -411,13 +548,17 @@ export function TrustCenterPage() {
 
         <RevealSection className="content-stage">
           <div className="section-intro">
-            <p className="eyebrow">Data handling</p>
+            <p className="eyebrow">
+              <IconText icon="privacy" tone="accent">Data handling</IconText>
+            </p>
             <h2>What PromptShield records and what it avoids by default.</h2>
           </div>
 
           <div className="trust-compare-grid">
             <section className="trust-compare-panel">
-              <p className="eyebrow">Recorded</p>
+              <p className="eyebrow">
+                <IconText icon="check" tone="mint">Recorded</IconText>
+              </p>
               <ul className="trust-list">
                 {trustDataHandling.stores.map((item) => (
                   <li key={item}>{item}</li>
@@ -426,7 +567,9 @@ export function TrustCenterPage() {
             </section>
 
             <section className="trust-compare-panel">
-              <p className="eyebrow">Avoided by default</p>
+              <p className="eyebrow">
+                <IconText icon="shield" tone="accent">Avoided by default</IconText>
+              </p>
               <ul className="trust-list">
                 {trustDataHandling.avoids.map((item) => (
                   <li key={item}>{item}</li>
@@ -438,15 +581,20 @@ export function TrustCenterPage() {
 
         <RevealSection className="content-stage">
           <div className="section-intro">
-            <p className="eyebrow">Control flow</p>
+            <p className="eyebrow">
+              <IconText icon="trend" tone="accent">Control flow</IconText>
+            </p>
             <h2>From policy publishing to intervention evidence in four steps.</h2>
           </div>
 
           <div className="timeline-grid">
             {trustFlow.map((item) => (
               <article key={item.step} className="timeline-step">
-                <span>{item.step}</span>
-                <h3>{item.title}</h3>
+                <div className="timeline-step-header">
+                  <span className="timeline-step-index">{item.step}</span>
+                  <IconBadge name={trustFlowIcon(item.step)} tone="accent" />
+                </div>
+                <h3 className="card-title">{item.title}</h3>
                 <p>{item.body}</p>
               </article>
             ))}
@@ -455,29 +603,39 @@ export function TrustCenterPage() {
 
         <RevealSection className="content-stage">
           <div className="section-intro">
-            <p className="eyebrow">Platform posture</p>
+            <p className="eyebrow">
+              <IconText icon="settings" tone="accent">Platform posture</IconText>
+            </p>
             <h2>Operational defaults that support a security-first deployment story.</h2>
           </div>
 
           <div className="split-stage">
             <div className="split-column">
               <article className="narrative-block">
-                <h3>Control plane</h3>
+                <h3 className="card-title">
+                  <IconText icon="overview" tone="accent">Control plane</IconText>
+                </h3>
                 <p>Magic-link access, policy publishing, billing, device activation, and review live in one admin surface.</p>
               </article>
               <article className="narrative-block">
-                <h3>Extension enforcement</h3>
+                <h3 className="card-title">
+                  <IconText icon="browser" tone="mint">Extension enforcement</IconText>
+                </h3>
                 <p>Paste, submit, and file actions are classified locally against the same shared policy engine used in tests and demos.</p>
               </article>
             </div>
 
             <div className="split-column">
               <article className="narrative-block">
-                <h3>Deployment footprint</h3>
+                <h3 className="card-title">
+                  <IconText icon="destination" tone="peach">Deployment footprint</IconText>
+                </h3>
                 <p>PromptShield runs today on AWS-hosted web and API services with Stripe-backed subscription lifecycle management.</p>
               </article>
               <article className="narrative-block">
-                <h3>Operational defaults</h3>
+                <h3 className="card-title">
+                  <IconText icon="privacy" tone="accent">Operational defaults</IconText>
+                </h3>
                 <p>Raw content capture is disabled by default, support diagnostics are opt-in, and retention stays focused on intervention metadata.</p>
               </article>
             </div>
@@ -486,15 +644,17 @@ export function TrustCenterPage() {
 
         <RevealSection className="closing-stage">
           <div>
-            <p className="eyebrow">Next step</p>
+            <p className="eyebrow">
+              <IconText icon="launch" tone="accent">Next step</IconText>
+            </p>
             <h2>Walk clients from trust posture to live intervention in the same session.</h2>
           </div>
           <div className="closing-actions">
             <NavLink className="primary-button" to="/login">
-              Open PromptShield
+              <IconText icon="launch" tone="ink" className="button-label">Open PromptShield</IconText>
             </NavLink>
             <NavLink className="secondary-button" to="/">
-              Return to platform overview
+              <IconText icon="overview" tone="neutral" className="button-label">Return to platform overview</IconText>
             </NavLink>
           </div>
         </RevealSection>
@@ -513,7 +673,9 @@ export function PrivacyPage() {
       <main className="marketing-main">
         <section className="trust-hero">
           <div>
-            <p className="eyebrow">Privacy Policy</p>
+            <p className="eyebrow">
+              <IconText icon="privacy" tone="accent">Privacy Policy</IconText>
+            </p>
             <h1>PromptShield is designed to minimize collected content and keep enforcement in the browser where possible.</h1>
           </div>
           <p>
@@ -524,21 +686,27 @@ export function PrivacyPage() {
 
         <RevealSection className="content-stage">
           <div className="section-intro">
-            <p className="eyebrow">What PromptShield does</p>
+            <p className="eyebrow">
+              <IconText icon="shield" tone="accent">What PromptShield does</IconText>
+            </p>
             <h2>PromptShield helps organizations prevent sensitive data from being pasted or uploaded to protected AI destinations.</h2>
           </div>
 
           <div className="split-stage">
             <div className="split-column">
               <article className="narrative-block">
-                <h3>Browser-side review</h3>
+                <h3 className="card-title">
+                  <IconText icon={privacyCardIcon("Browser-side review")} tone="mint">Browser-side review</IconText>
+                </h3>
                 <p>
                   PromptShield classifies prompt text and file metadata locally inside the extension before a protected
                   submission is allowed to continue.
                 </p>
               </article>
               <article className="narrative-block">
-                <h3>Policy-driven intervention</h3>
+                <h3 className="card-title">
+                  <IconText icon={privacyCardIcon("Policy-driven intervention")} tone="accent">Policy-driven intervention</IconText>
+                </h3>
                 <p>
                   Organizations can configure PromptShield to warn, redact, require justification, or block depending on
                   the matched policy rule.
@@ -548,14 +716,18 @@ export function PrivacyPage() {
 
             <div className="split-column">
               <article className="narrative-block">
-                <h3>Admin review</h3>
+                <h3 className="card-title">
+                  <IconText icon={privacyCardIcon("Admin review")} tone="peach">Admin review</IconText>
+                </h3>
                 <p>
                   Authorized administrators can review intervention events, publish policy updates, manage devices, and
                   oversee billing in the PromptShield control plane.
                 </p>
               </article>
               <article className="narrative-block">
-                <h3>Deployment model</h3>
+                <h3 className="card-title">
+                  <IconText icon={privacyCardIcon("Deployment model")} tone="accent">Deployment model</IconText>
+                </h3>
                 <p>PromptShield currently operates on AWS-hosted services under the `promptshieldapp.co.uk` domain.</p>
               </article>
             </div>
@@ -564,13 +736,17 @@ export function PrivacyPage() {
 
         <RevealSection className="content-stage">
           <div className="section-intro">
-            <p className="eyebrow">Data handling</p>
+            <p className="eyebrow">
+              <IconText icon="privacy" tone="accent">Data handling</IconText>
+            </p>
             <h2>PromptShield stores operational security signal, not raw prompts, by default.</h2>
           </div>
 
           <div className="trust-compare-grid">
             <section className="trust-compare-panel">
-              <p className="eyebrow">PromptShield may store</p>
+              <p className="eyebrow">
+                <IconText icon="check" tone="mint">PromptShield may store</IconText>
+              </p>
               <ul className="trust-list">
                 <li>Extension device identifiers and tenant activation state</li>
                 <li>Policy versions and protected destination configuration</li>
@@ -581,7 +757,9 @@ export function PrivacyPage() {
             </section>
 
             <section className="trust-compare-panel">
-              <p className="eyebrow">PromptShield avoids by default</p>
+              <p className="eyebrow">
+                <IconText icon="shield" tone="accent">PromptShield avoids by default</IconText>
+              </p>
               <ul className="trust-list">
                 <li>Raw prompt bodies in stored event records</li>
                 <li>Full uploaded file contents</li>
@@ -594,29 +772,39 @@ export function PrivacyPage() {
 
         <RevealSection className="content-stage">
           <div className="section-intro">
-            <p className="eyebrow">Extension permissions</p>
+            <p className="eyebrow">
+              <IconText icon="settings" tone="accent">Extension permissions</IconText>
+            </p>
             <h2>Why the Chrome extension asks for the permissions it uses.</h2>
           </div>
 
           <div className="split-stage">
             <div className="split-column">
               <article className="narrative-block">
-                <h3>`storage`</h3>
+                <h3 className="card-title">
+                  <IconText icon={privacyCardIcon("`storage`")} tone="accent">`storage`</IconText>
+                </h3>
                 <p>Used to store local preferences, device activation state, cached policy data, and queued events.</p>
               </article>
               <article className="narrative-block">
-                <h3>`alarms`</h3>
+                <h3 className="card-title">
+                  <IconText icon={privacyCardIcon("`alarms`")} tone="peach">`alarms`</IconText>
+                </h3>
                 <p>Used to trigger background policy synchronization and queued-event flush operations.</p>
               </article>
             </div>
 
             <div className="split-column">
               <article className="narrative-block">
-                <h3>`activeTab`</h3>
+                <h3 className="card-title">
+                  <IconText icon={privacyCardIcon("`activeTab`")} tone="mint">`activeTab`</IconText>
+                </h3>
                 <p>Used to show the current host and whether the active tab is protected in the extension popup.</p>
               </article>
               <article className="narrative-block">
-                <h3>Host permissions</h3>
+                <h3 className="card-title">
+                  <IconText icon={privacyCardIcon("Host permissions")} tone="accent">Host permissions</IconText>
+                </h3>
                 <p>
                   Used so PromptShield can evaluate content on protected web destinations that the user actively visits,
                   including supported GenAI sites.
@@ -628,14 +816,18 @@ export function PrivacyPage() {
 
         <RevealSection className="content-stage">
           <div className="section-intro">
-            <p className="eyebrow">Contact</p>
+            <p className="eyebrow">
+              <IconText icon="mail" tone="accent">Contact</IconText>
+            </p>
             <h2>Questions about PromptShield privacy or extension behavior.</h2>
           </div>
 
           <div className="split-stage">
             <div className="split-column">
               <article className="narrative-block">
-                <h3>Website</h3>
+                <h3 className="card-title">
+                  <IconText icon={privacyCardIcon("Website")} tone="peach">Website</IconText>
+                </h3>
                 <p>
                   <a href="https://promptshieldapp.co.uk" target="_blank" rel="noreferrer">
                     https://promptshieldapp.co.uk
@@ -645,7 +837,9 @@ export function PrivacyPage() {
             </div>
             <div className="split-column">
               <article className="narrative-block">
-                <h3>Support contact</h3>
+                <h3 className="card-title">
+                  <IconText icon={privacyCardIcon("Support contact")} tone="accent">Support contact</IconText>
+                </h3>
                 <p>Use a monitored support mailbox before store publication. The current recommended address is `security@promptshieldapp.co.uk`.</p>
               </article>
             </div>
@@ -690,7 +884,7 @@ export function LoginPage() {
   return (
     <section className="auth-page">
       <form className="auth-card" onSubmit={onSubmit}>
-        <p className="eyebrow">Admin Sign-in</p>
+        <BrandLockup caption="Secure admin sign-in" className="auth-brand-lockup" />
         <h1>Open the PromptShield control plane.</h1>
         <p className="auth-copy">Use your work email to request a secure magic link and activate the tenant.</p>
         <label>
@@ -702,12 +896,12 @@ export function LoginPage() {
           <input value={orgName} onChange={(event) => setOrgName(event.target.value)} type="text" />
         </label>
         <button className="primary-button" type="submit">
-          Email sign-in link
+          <IconText icon="mail" tone="ink" className="button-label">Email sign-in link</IconText>
         </button>
         {status ? <p className="status-line">{status}</p> : null}
         {previewUrl ? (
           <a className="preview-link" href={previewUrl}>
-            Open secure sign-in link
+            <IconText icon="launch" tone="accent">Open secure sign-in link</IconText>
           </a>
         ) : null}
       </form>
@@ -762,7 +956,7 @@ export function AuthVerifyPage() {
   return (
     <section className="auth-page">
       <div className="auth-card">
-        <p className="eyebrow">Verifying</p>
+        <BrandLockup caption="Verifying secure link" className="auth-brand-lockup" />
         <h1>{message}</h1>
       </div>
     </section>

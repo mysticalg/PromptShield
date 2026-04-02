@@ -1,7 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="16" fill="#f4ede2" />
-  <path
-    d="M19 18h18c8.284 0 15 6.716 15 15s-6.716 15-15 15H29v10h-10V18Zm10 10v10h8c2.761 0 5-2.239 5-5s-2.239-5-5-5h-8Z"
-    fill="#8f421d"
-  />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="16" fill="#f6eee3"/>
+  <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#tile)" stroke="#e1cbb2"/>
+  <path d="M32 10.6 48.2 16.86v12.08c0 10.31-6.13 18.95-16.2 23.46-10.07-4.51-16.2-13.15-16.2-23.46V16.86L32 10.6Z" fill="url(#shield)"/>
+  <path d="M32 16.86 42.7 20.98v7.85c0 7.01-3.97 12.95-10.7 16.08-6.73-3.13-10.7-9.07-10.7-16.08v-7.85L32 16.86Z" fill="url(#core)"/>
+  <path d="M24.58 29.12c2.36-6.32 6.68-11.19 12.98-14.63M26.93 21.85h7.98M23.5 37.36c2.6-6.08 7.42-10.83 14.45-14.25M29.62 30.42h10.04" stroke="#8f431d" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M23.24 37.52h7.48" stroke="#d37444" stroke-width="2.5" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="tile" x1="8" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff8ef"/>
+      <stop offset="1" stop-color="#fde9d7"/>
+    </linearGradient>
+    <linearGradient id="shield" x1="18" y1="13" x2="47" y2="50" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#d37444"/>
+      <stop offset="1" stop-color="#8f431d"/>
+    </linearGradient>
+    <linearGradient id="core" x1="21" y1="18" x2="43" y2="42" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fffaf4"/>
+      <stop offset="1" stop-color="#fde6d2"/>
+    </linearGradient>
+  </defs>
 </svg>
