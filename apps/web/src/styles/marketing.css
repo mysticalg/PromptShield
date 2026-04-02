@@ -20,10 +20,11 @@
   position: sticky;
   top: 1rem;
   z-index: 10;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "brand nav actions";
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  gap: 1rem 1.4rem;
   padding: 1rem 1.2rem;
   margin-bottom: 1rem;
   border-radius: 1.5rem;
@@ -34,6 +35,7 @@
 }
 
 .marketing-brand-link {
+  grid-area: brand;
   display: inline-flex;
   align-items: center;
   min-width: 0;
@@ -62,16 +64,37 @@
   flex-wrap: wrap;
 }
 
+.marketing-nav {
+  grid-area: nav;
+  min-width: 0;
+  justify-content: center;
+  justify-self: center;
+}
+
+.marketing-topbar-actions {
+  grid-area: actions;
+  min-width: 0;
+  justify-content: flex-end;
+  justify-self: end;
+  flex-wrap: nowrap;
+}
+
 .marketing-nav a,
 .marketing-footer-links a {
   color: var(--muted);
   display: inline-flex;
   align-items: center;
+  white-space: nowrap;
 }
 
 .marketing-nav a.active,
 .marketing-footer-links a.active {
   color: var(--ink);
+}
+
+.marketing-topbar-actions .text-link,
+.marketing-topbar-actions .primary-button {
+  white-space: nowrap;
 }
 
 .hero-stage {
@@ -591,10 +614,23 @@
   }
 
   .closing-stage,
-  .marketing-footer,
-  .marketing-topbar {
+  .marketing-footer {
     display: grid;
     justify-content: start;
+  }
+
+  .marketing-topbar {
+    grid-template-columns: auto auto;
+    grid-template-areas:
+      "brand actions"
+      "nav nav";
+    align-items: start;
+  }
+
+  .marketing-nav {
+    width: 100%;
+    justify-content: flex-start;
+    justify-self: stretch;
   }
 }
 
@@ -608,6 +644,11 @@
   }
 
   .marketing-topbar {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "brand"
+      "nav"
+      "actions";
     top: 0.75rem;
     gap: 0.75rem;
     padding: 0.9rem;
@@ -635,6 +676,9 @@
   .marketing-topbar-actions {
     width: 100%;
     align-items: stretch;
+    justify-content: flex-start;
+    justify-self: stretch;
+    flex-wrap: wrap;
   }
 
   .marketing-topbar-actions .primary-button {
