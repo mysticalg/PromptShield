@@ -361,12 +361,20 @@
 }
 
 .marketing-footer {
+  padding: 1.2rem 0.2rem 0;
+  color: var(--muted);
+}
+
+.marketing-footer-inner {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.marketing-footer-main {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.2rem 0.2rem 0;
-  color: var(--muted);
 }
 
 .marketing-footer .brand-lockup {
@@ -375,6 +383,25 @@
 
 .marketing-footer .brand-lockup-image {
   width: 11.5rem;
+}
+
+.footer-adsense {
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.footer-adsense__label {
+  margin: 0 0 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.footer-adsense__unit {
+  width: 100%;
+  min-height: 90px;
 }
 
 .trust-hero {
@@ -614,7 +641,7 @@
   }
 
   .closing-stage,
-  .marketing-footer {
+  .marketing-footer-main {
     display: grid;
     justify-content: start;
   }
@@ -778,5 +805,9 @@
   .auth-brand-lockup .brand-lockup-image,
   .marketing-footer .brand-lockup-image {
     width: 8.4rem;
+  }
+
+  .footer-adsense {
+    padding-top: 0.85rem;
   }
 }

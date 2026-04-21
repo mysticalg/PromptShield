@@ -9,6 +9,26 @@
       content="PromptShield blocks, warns, and redacts sensitive content before it reaches GenAI and protected web workflows."
     />
     <link rel="icon" type="image/png" href="/promptshield-logo-mark.png" />
+    <script src="/adsense-config.js"></script>
+    <script>
+      (function () {
+        const config = window.__FOOTER_ADSENSE__;
+        const client = typeof config?.client === "string" ? config.client.trim() : "";
+
+        if (!client || document.querySelector("script[data-footer-adsense-loader]")) {
+          return;
+        }
+
+        const script = document.createElement("script");
+        script.async = true;
+        script.src =
+          "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" +
+          encodeURIComponent(client);
+        script.crossOrigin = "anonymous";
+        script.dataset.footerAdsenseLoader = "true";
+        document.head.appendChild(script);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -28,6 +28,7 @@ import {
   TonePill,
   type UiGlyphName
 } from "./brand-system";
+import { FooterAdSense } from "./footer-adsense";
 import { apiRequest, API_BASE_URL } from "./lib/api";
 import { storeSession } from "./lib/session";
 import { useSessionContext } from "./session-context";
@@ -180,20 +181,25 @@ function MarketingHeader() {
 function MarketingFooter() {
   return (
     <footer className="marketing-footer">
-      <BrandLockup caption="Browser-first controls for GenAI data handling." />
-      <div className="marketing-footer-links">
-        <NavLink to="/trust">
-          <IconText icon="shield" tone="neutral">Trust Center</IconText>
-        </NavLink>
-        <NavLink to="/privacy">
-          <IconText icon="privacy" tone="neutral">Privacy</IconText>
-        </NavLink>
-        <NavLink to="/pricing">
-          <IconText icon="billing" tone="neutral">Pricing</IconText>
-        </NavLink>
-        <NavLink to="/login">
-          <IconText icon="mail" tone="neutral">Admin sign-in</IconText>
-        </NavLink>
+      <div className="marketing-footer-inner">
+        <div className="marketing-footer-main">
+          <BrandLockup caption="Browser-first controls for GenAI data handling." />
+          <div className="marketing-footer-links">
+            <NavLink to="/trust">
+              <IconText icon="shield" tone="neutral">Trust Center</IconText>
+            </NavLink>
+            <NavLink to="/privacy">
+              <IconText icon="privacy" tone="neutral">Privacy</IconText>
+            </NavLink>
+            <NavLink to="/pricing">
+              <IconText icon="billing" tone="neutral">Pricing</IconText>
+            </NavLink>
+            <NavLink to="/login">
+              <IconText icon="mail" tone="neutral">Admin sign-in</IconText>
+            </NavLink>
+          </div>
+        </div>
+        <FooterAdSense />
       </div>
     </footer>
   );
